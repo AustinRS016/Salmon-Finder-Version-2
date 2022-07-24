@@ -1,6 +1,8 @@
 # Salmon-Finder-Version-2
 2nd iteration of Master's capstone project, post graduation. Implementing React.js and Material UI for ease of development and cleaner user interface.
 
+Version 1: https://austinrs016.github.io/mapHatcheries/
+
 Feedback from version 1:
   - Black dots on map representing hatchery have 'no meaning'
   - Line graph is hard to interpret
