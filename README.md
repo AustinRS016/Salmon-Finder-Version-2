@@ -24,7 +24,8 @@ Process data for D3.js graphs using python.
 Data from https://data.wa.gov/dataset/WDFW-Hatchery-Adult-Salmon-Returns/9q4e-xhag/data
  - Make reusable scripts so application can be updated every year
  - Revisit decision making on what fields to include/exclude, emphasis on simplification
- - Come up with organized way to store/retrieve data based on hatchery  
+ - Come up with organized way to store/retrieve data based on hatchery 
+ 
 Outputs:
   - geoJSON of hatchery locations
   - JSON of data for bar graph
