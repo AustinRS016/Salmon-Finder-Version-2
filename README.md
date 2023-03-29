@@ -1,4 +1,12 @@
 # Salmon-Finder-Version-2
+
+## How to run
+
+1. python3 -m venv venv - Only run this once, it will make a venv folder.
+2. venv\Scripts\activate - Run this everytime you navigate to the directory
+3. pip3 install -r requirements.txt - Run this after activating the venv, and when requirements.txt changes. It installs the dependencies specified.
+4. When you want to add new Python packages, add it to requirements.txt and run step 3 again!
+
 2nd iteration of Master's capstone project, post graduation. Implementing React.js and Material UI for ease of development and cleaner user interface.
 
 Version 1: https://austinrs016.github.io/mapHatcheries/
