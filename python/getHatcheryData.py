@@ -46,6 +46,3 @@ def getWDFWData(hatchery, date=""):
                             )"""
                          )
     return results
-
-
-prin
