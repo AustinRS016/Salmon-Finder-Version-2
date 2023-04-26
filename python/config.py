@@ -1,9 +1,11 @@
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
+
+from get_hatchery_data import WDFWProviderLogic
 
 
 class HatcheryProvider(Enum):
-    WA_HATCHERY_DATA = auto()
+    WA_HATCHERY_DATA = WDFWProviderLogic()
 
 
 @dataclass
