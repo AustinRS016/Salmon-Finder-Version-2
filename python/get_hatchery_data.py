@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def getWDFWData(hatchery, date=""):
+def get_WDFW_Data(hatchery, date=""):
     """
     Example inputs:    
     Parameters: 
@@ -19,9 +19,9 @@ def getWDFWData(hatchery, date=""):
         hatcheryData: list of dictionaries for each row in dataset
     """
     if (date != ""):
-        dateQuery = f"AND date > '{date}'"
+        date_query = f"AND date > '{date}'"
     else:
-        dateQuery = ""
+        date_query = ""
 
     client = Socrata("data.wa.gov",
                      os.getenv('APP_KEY'),
@@ -30,12 +30,12 @@ def getWDFWData(hatchery, date=""):
 
     # Limit defaults to 1000, not sure what to put for 'no-limit' dataset is ~450,000 rows
     #  use limit=1 for testing purposes and limit=10000000 for development
-    results = client.get("9q4e-xhag", limit=100, select="species, origin, run, facility, adult_count, date",
+    results = client.get("9q4e-xhag", limit=1000000000, select="species, origin, run, facility, adult_count, date",
                          where=f"""
                         facility='{hatchery}' 
                         AND event='Trap Estimate'
                         AND adult_count > 0 
-                        {dateQuery}
+                        {date_query}
                         AND (
                             species='Coho'
                             OR species='Chinook' 
@@ -46,3 +46,18 @@ def getWDFWData(hatchery, date=""):
                             )"""
                          )
     return results
+
+def WDFW_to_df(results):
+    '''
+    Paramters:
+        results: list of dictionaries for each row in the dataset
+    Outputs:
+        df: pandas dataframe
+    '''
+    df = pd.DataFrame(results)
+    df.drop_duplicates()
+    df['date'] = pd.to_datetime(df['date'])
+    df['adult_count'] = pd.to_numeric(df['adult_count'])
+    df['DOY'] = df['date'].dt.strftime('%j')
+    df['Year'] = df['date'].dt.strftime('%Y')
+    return df

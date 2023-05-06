@@ -1,5 +1,8 @@
 venv/
 .DS_Store
 .idea
-
 .env
+.data
+.dev
+.rolling_average
+.bargraph
