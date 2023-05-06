@@ -53,51 +53,31 @@ class WDFWProviderLogic(HatcheryProviderLogic):
                     OR species='Sockeye'
                 )""",
         )
-        print(results)
-        # df = WDFW_to_df(results)
-        return results
+        return WDFW_to_df(results)
+    
+    def find_distinct_populations(self, df) -> Any:
+        """
+        Parameters:
+            df: pandas dataframe of data returned from getWDFWData
+        Output: 
+            distinct_populations: List of dictionaries
+                example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer'}]
+        """
+        # Group by species -> run -> origin
+        species = df.species.unique()
 
+        distinctPopulations = []
 
-# def get_WDFW_Data(hatchery, date=""):
-#     """
-#     Example inputs:    
-#     Parameters: 
-#         hatchery: string
-#             The name of the hatchery from the config
-#         date: string
-#             Optional parameter to query from a specific date
-#             Format: YYYY-MM-DD
-#     Returns:
-#         hatcheryData: list of dictionaries for each row in dataset
-#     """
-#     if (date != ""):
-#         date_query = f"AND date > '{date}'"
-#     else:
-#         date_query = ""
-
-#     client = Socrata("data.wa.gov",
-#                      os.getenv('APP_KEY'),
-#                      username=os.getenv('APP_USERNAME'),
-#                      password=os.getenv('APP_PASSWORD'))
-
-#     # Limit defaults to 1000, not sure what to put for 'no-limit' dataset is ~450,000 rows
-#     #  use limit=1 for testing purposes and limit=10000000 for development
-#     results = client.get("9q4e-xhag", limit=1000000000, select="species, origin, run, facility, adult_count, date",
-#                          where=f"""
-#                         facility='{hatchery}' 
-#                         AND event='Trap Estimate'
-#                         AND adult_count > 0 
-#                         {date_query}
-#                         AND (
-#                             species='Coho'
-#                             OR species='Chinook' 
-#                             OR species='Steelhead'
-#                             OR species='Chum' 
-#                             OR species='Pink' 
-#                             OR species='Sockeye' 
-#                             )"""
-#                          )
-#     return results
+        for s in species:
+            df_s = df[df.species == s]
+            run = df_s.run.unique()
+            for r in run:
+                df_r = df_s[df_s.run == r]
+                origin = df_r.origin.unique()
+                for o in origin:
+                    distinctPopulations.append(
+                        {'species': s, 'run': r, 'origin': o,})              
+        return distinctPopulations
 
 def WDFW_to_df(results):
 
@@ -108,7 +88,6 @@ def WDFW_to_df(results):
         df: pandas dataframe
     '''
     df = pd.DataFrame(results)
-    print(df)
     df.drop_duplicates()
     df['date'] = pd.to_datetime(df['date'])
     df['adult_count'] = pd.to_numeric(df['adult_count'])
