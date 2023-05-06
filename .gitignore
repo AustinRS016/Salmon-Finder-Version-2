@@ -2,6 +2,7 @@ venv/
 .DS_Store
 .idea
 .env
+python/__pycache__/
 .data
 .dev
 .rolling_average
