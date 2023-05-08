@@ -81,13 +81,15 @@ def calculate_rolling_avg(population, DOY_dict):
             shifted_dict = shift_forward(DOY_dict)
             series = pd.Series(shifted_dict)
             series.rolling(5, center=True)   
-            finalDict = shift_backward(series)
+            final_dict = shift_backward(series)
+            data = make_json_table_format(final_dict)
         else:
             series = pd.Series(DOY_dict)
             series.rolling(5, center=True)  
             series = series.round(decimals=3)       
-            finalDict = series.to_dict()
-        return finalDict
+            final_dict = series.to_dict()
+            data = make_json_table_format(final_dict)
+        return data
 
 
 
@@ -127,5 +129,20 @@ def shift_backward(series):
                 unshifted_dict[day] = percentage
             else:
                 unshifted_dict[row[0]] = percentage
-        print(unshifted_dict)
         return unshifted_dict
+
+def make_json_table_format(dict):
+        '''
+        Parameters: dict {string: number}
+        Output: dict [{string: number, string, number}...]
+        Description:
+        Changes data from {DayOfYear: FishCount} to {day: DayOfYear, and count: FishCount}
+        Data format is more easily consumed by D3.js
+        '''
+        dictArr = []
+        for key in dict:
+            new_value = {"day": key, "count": dict[key]}
+            dictArr.append(new_value)
+        return dictArr
+          
+        
