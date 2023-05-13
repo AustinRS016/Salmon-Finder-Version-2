@@ -1,15 +1,9 @@
 import os
 
-from typing import Any
-
-from dotenv import load_dotenv
 from sodapy import Socrata
 import pandas as pd
 
 from hatchery_provider_meta import HatcheryProviderLogic, HatcheryProviderResponse
-
-# TODO move this to entry point 
-load_dotenv()
 
 
 class WDFWProviderLogic(HatcheryProviderLogic):
@@ -58,12 +52,12 @@ class WDFWProviderLogic(HatcheryProviderLogic):
         df = self._WDFW_to_df(results)
         distinct_populations = self._find_distinct_populations(df)
         return HatcheryProviderResponse(distinct_populations, df)
-    
+
     def _find_distinct_populations(self, df) -> list[dict[str, str]]:
         """
         Parameters:
             df: pandas dataframe of data returned from getWDFWData
-        Output: 
+        Output:
             distinct_populations: List of dictionaries
                 example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer'}]
         """
@@ -80,21 +74,25 @@ class WDFWProviderLogic(HatcheryProviderLogic):
                 origin = df_r.origin.unique()
                 for o in origin:
                     distinctPopulations.append(
-                        {'species': s, 'run': r, 'origin': o,})              
+                        {
+                            "species": s,
+                            "run": r,
+                            "origin": o,
+                        }
+                    )
         return distinctPopulations
 
     def _WDFW_to_df(self, results):
-
-        '''
+        """
         Paramters:
             results: list of dictionaries for each row in the dataset
         Outputs:
-            df: pandas dataframe representing 
-        '''
+            df: pandas dataframe representing
+        """
         df = pd.DataFrame(results)
         df.drop_duplicates()
-        df['date'] = pd.to_datetime(df['date'])
-        df['adult_count'] = pd.to_numeric(df['adult_count'])
-        df['DOY'] = df['date'].dt.strftime('%j')
-        df['Year'] = df['date'].dt.strftime('%Y')
+        df["date"] = pd.to_datetime(df["date"])
+        df["adult_count"] = pd.to_numeric(df["adult_count"])
+        df["DOY"] = df["date"].dt.strftime("%j")
+        df["Year"] = df["date"].dt.strftime("%Y")
         return df

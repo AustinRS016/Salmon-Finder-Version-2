@@ -1,5 +1,9 @@
+from dotenv import load_dotenv
+
 from config import hatcheries
 from create_graph_data import compute_bargraph_data, get_rolling_average
+
+load_dotenv()
 
 hatchery_name = "WALLACE R HATCHERY"
 provider = hatcheries[hatchery_name]
@@ -13,8 +17,8 @@ rolling_average = get_rolling_average(hatchery_provider_response)
 '''
 This is how I created my local dev data
 '''
-with open (f"{hatchery_name}_bargraph.json", "w") as outfile:
+with open(f"{hatchery_name}_bargraph.json", "w") as outfile:
     outfile.write(bargraph)
 
-with open (f"{hatchery_name}_areagraph.json", "w") as outfile:
+with open(f"{hatchery_name}_areagraph.json", "w") as outfile:
     outfile.write(rolling_average)
