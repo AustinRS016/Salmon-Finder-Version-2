@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from get_hatchery_data import WDFWProviderLogic
+from wdfw_provider import WDFWProviderLogic
 
 
 class HatcheryProvider(Enum):

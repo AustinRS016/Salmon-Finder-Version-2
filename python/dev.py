@@ -1,18 +1,20 @@
-from get_hatchery_data import get_WDFW_Data, WDFW_to_df
-from create_graph_data import find_distinct_populations, compute_bargraph_data, get_rolling_average
-from data import testData
+from config import hatcheries
+from create_graph_data import compute_bargraph_data, get_rolling_average
 
-data = get_WDFW_Data('WALLACE R HATCHERY')
-df = WDFW_to_df(data)
+hatchery_name = "WALLACE R HATCHERY"
+provider = hatcheries[hatchery_name]
 
-distinct_populations = find_distinct_populations(df)
+hatchery_provider_response = provider.hatchery_provider.value.get_hatchery_data(hatchery_name)
 
-bargraph = compute_bargraph_data(df, distinct_populations)
+# Outputs as JSON
+bargraph = compute_bargraph_data(hatchery_provider_response)
+rolling_average = get_rolling_average(hatchery_provider_response)
 
-rolling_average = get_rolling_average(df, distinct_populations)
-
-with open ("bargraph.json", "w") as outfile:
+'''
+This is how I created my local dev data
+'''
+with open (f"{hatchery_name}_bargraph.json", "w") as outfile:
     outfile.write(bargraph)
 
-with open ("rolling_average.json", "w") as outfile:
+with open (f"{hatchery_name}_areagraph.json", "w") as outfile:
     outfile.write(rolling_average)
