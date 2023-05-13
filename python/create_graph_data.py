@@ -50,7 +50,7 @@ def compute_bargraph_data(df, distinct_populations):
         for y in years:
             year_sum = subset_df.loc[subset_df['Year'] == y, 'adult_count'].sum()
             # year_counts.append({y: int(year_sum)})
-            year_counts.append({'year': y, 'count': int(year_sum)})
+            year_counts.append({'year': int(y), 'count': int(year_sum)})
 
         graph_data.append(
             {'species': pops['species'], 'run': pops['run'], 'origin': pops['origin'], 'year_counts': year_counts})
