@@ -1,7 +1,45 @@
 import pandas as pd
 import json
+from datetime import date, timedelta
 
 from hatchery_provider_meta import HatcheryProviderResponse
+
+
+def get_recent_escapement(hatchery_provider_response: HatcheryProviderResponse):
+    distinct_populations = hatchery_provider_response.distinct_populations
+    df = hatchery_provider_response.df
+
+    two_weeks_prior = pd.to_datetime(date.today() + timedelta(days=-14))
+    string_time = two_weeks_prior.strftime("%Y-%m-%d")
+    print(string_time)
+
+    filtered_df = df[df['date'] > two_weeks_prior]
+
+    if len(filtered_df) == 0: return []
+
+    graph_data = []
+    for pops in distinct_populations:
+        subset_df = filtered_df[(filtered_df.species == pops['species']) & (filtered_df.run == pops['run']) & (filtered_df.origin == pops['origin'])]
+        if len(subset_df) == 0: continue
+        grouped = subset_df.groupby('date').sum()
+        grouped.index = grouped.index.strftime("%Y-%m-%d")
+        grouped_dict = grouped.to_dict()
+        day_counts = []
+        for i in range(14):
+            day = pd.to_datetime(two_weeks_prior + timedelta(days=i))
+            day = day.strftime("%Y-%m-%d")
+            day_dict = {}
+            if day in grouped_dict['adult_count']:
+                 day_dict['day'] = day
+                 count = int(grouped_dict['adult_count'][day])
+                 day_dict['count'] = count
+            else:
+                 day_dict['day'] = day
+                 day_dict['count'] = 0
+            day_counts.append(day_dict)
+        graph_data.append(
+            {'species': pops['species'], 'run': pops['run'], 'origin': pops['origin'], 'day_counts': day_counts})
+    return graph_data
 
 
 def compute_bargraph_data(hatchery_provider_response: HatcheryProviderResponse):
