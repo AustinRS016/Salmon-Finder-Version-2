@@ -1,8 +1,5 @@
 from config import hatcheries
-from wdfw_provider import WDFWProviderLogic
 from create_graph_data import compute_bargraph_data, get_rolling_average
-
-wdfw_provider_logic = WDFWProviderLogic()
 
 for hatchery_name, provider in hatcheries.items():
 
