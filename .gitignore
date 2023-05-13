@@ -4,6 +4,5 @@ venv/
 .env
 python/__pycache__/
 .data
-dev.py
 .rolling_average
 .bargraph
