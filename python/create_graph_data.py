@@ -6,12 +6,19 @@ from hatchery_provider_meta import HatcheryProviderResponse
 
 
 def get_recent_escapement(hatchery_provider_response: HatcheryProviderResponse):
+
+    '''
+        Parameters:
+        hatchery_provider_response
+    Output:
+        bargraph_data: JSON string as:
+            List of dictionaries
+            example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer', year_counts: [{'day': int, 'count': int}]}]
+    '''
     distinct_populations = hatchery_provider_response.distinct_populations
     df = hatchery_provider_response.df
 
     two_weeks_prior = pd.to_datetime(date.today() + timedelta(days=-14))
-    string_time = two_weeks_prior.strftime("%Y-%m-%d")
-    print(string_time)
 
     filtered_df = df[df['date'] > two_weeks_prior]
 
@@ -39,7 +46,7 @@ def get_recent_escapement(hatchery_provider_response: HatcheryProviderResponse):
             day_counts.append(day_dict)
         graph_data.append(
             {'species': pops['species'], 'run': pops['run'], 'origin': pops['origin'], 'day_counts': day_counts})
-    return graph_data
+    return json.dumps(graph_data)
 
 
 def compute_bargraph_data(hatchery_provider_response: HatcheryProviderResponse):
@@ -49,7 +56,7 @@ def compute_bargraph_data(hatchery_provider_response: HatcheryProviderResponse):
     Output:
         bargraph_data: JSON string as:
             List of dictionaries
-            example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer', year_counts: [{year: Int}]}]
+            example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer', year_counts: [{year: int, count: int}]}]
     Info:
         In this study populations are distinguised by what species they are (species), if they are hatchery
         or wild (origin), and what time of the year they return (run)
@@ -88,8 +95,7 @@ def get_rolling_average(hatchery_provider_response: HatcheryProviderResponse):
         hatchery_provider_response
     Output:
         final_dict: JSON string as:
-            dict {int: float}
-            Dictionary with key as DOY and value as smoothed normalized average
+            Output: list[dict['year': int, 'count': float]]
     """
     distinct_populations = hatchery_provider_response.distinct_populations
     df = hatchery_provider_response.df
@@ -266,7 +272,7 @@ def shift_backward(series):
 def make_json_table_format(dict):
     """
     Parameters: dict {string: number}
-    Output: dict [{string: number, string, number}...]
+    Output: list[dict[year: int, count: float]]
     Description:
     Changes data from {DayOfYear: FishCount} to {day: DayOfYear, and count: FishCount}
     Data format is more easily consumed by D3.js
