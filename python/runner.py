@@ -40,7 +40,7 @@ for hatchery_name, provider in hatcheries.items():
 
     object_recent_escapement = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{hatchery_name.replace('', '_')}_recent_escapement"
+        key=f"{hatchery_name.replace(' ', '_')}_recent_escapement"
     )
 
     object_recent_escapement.put(Body=recent_escapement)
