@@ -4,7 +4,11 @@ import os
 from dotenv import load_dotenv
 
 from config import hatcheries
-from create_graph_data import compute_bargraph_data, get_rolling_average, get_recent_escapement
+from create_graph_data import (
+    compute_bargraph_data,
+    get_rolling_average,
+    get_recent_escapement,
+)
 
 load_dotenv()
 
@@ -40,7 +44,7 @@ for hatchery_name, provider in hatcheries.items():
 
     object_recent_escapement = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{hatchery_name.replace(' ', '_')}_recent_escapement"
+        key=f"{hatchery_name.replace(' ', '_')}_recent_escapement",
     )
 
     object_recent_escapement.put(Body=recent_escapement)
