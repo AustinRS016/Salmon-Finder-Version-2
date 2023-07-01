@@ -9,5 +9,4 @@ ex: "http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no="  + e.featu
 ## 'hatchLat' and 'hatchLon' are used to retrieve weather data
 "https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lon="+ hatchLon +"&exclude=hourly,minutely&units=imperial&appid=c6e7120c57d9cf83d3bdb078b1beb1f1"
 
-![data_diagram](https://github.com/AustinRS016/Salmon-Finder-Version-2/assets/61678116/444ab775-d431-4c6c-a896-6ca519af689b)
-![data_diagram](https://github.com/AustinRS016/Salmon-Finder-Version-2/assets/61678116/69fe137c-59a8-4d7a-958a-df632e140c8a)
+![data_diagram](https://github.com/AustinRS016/Salmon-Finder-Version-2/assets/61678116/6226039e-135c-4816-ae30-91b20a7aae77)
