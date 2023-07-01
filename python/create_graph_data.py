@@ -1,34 +1,45 @@
 import pandas as pd
 import json
 from datetime import date, timedelta
+import numpy as np
+from numpy import asarray
+from numpy import exp
+from sklearn.neighbors import KernelDensity
+
 
 from hatchery_provider_meta import HatcheryProviderResponse
 
 
 def get_recent_escapement(hatchery_provider_response: HatcheryProviderResponse):
-
-    '''
+    """
         Parameters:
         hatchery_provider_response
     Output:
         bargraph_data: JSON string as:
             List of dictionaries
-            example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer', year_counts: [{'day': int, 'count': int}]}]
-    '''
+            example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer', 
+                year_counts: [{'day': int, 'count': int}]}]
+    """
     distinct_populations = hatchery_provider_response.distinct_populations
     df = hatchery_provider_response.df
 
     two_weeks_prior = pd.to_datetime(date.today() + timedelta(days=-14))
 
-    filtered_df = df[df['date'] > two_weeks_prior]
+    filtered_df = df[df["date"] > two_weeks_prior]
 
-    if len(filtered_df) == 0: return []
+    if len(filtered_df) == 0:
+        return json.dumps([])
 
     graph_data = []
     for pops in distinct_populations:
-        subset_df = filtered_df[(filtered_df.species == pops['species']) & (filtered_df.run == pops['run']) & (filtered_df.origin == pops['origin'])]
-        if len(subset_df) == 0: continue
-        grouped = subset_df.groupby('date').sum()
+        subset_df = filtered_df[
+            (filtered_df.species == pops["species"])
+            & (filtered_df.run == pops["run"])
+            & (filtered_df.origin == pops["origin"])
+        ]
+        if len(subset_df) == 0:
+            continue
+        grouped = subset_df.groupby("date").sum()
         grouped.index = grouped.index.strftime("%Y-%m-%d")
         grouped_dict = grouped.to_dict()
         day_counts = []
@@ -36,16 +47,22 @@ def get_recent_escapement(hatchery_provider_response: HatcheryProviderResponse):
             day = pd.to_datetime(two_weeks_prior + timedelta(days=i))
             day = day.strftime("%Y-%m-%d")
             day_dict = {}
-            if day in grouped_dict['adult_count']:
-                 day_dict['day'] = day
-                 count = int(grouped_dict['adult_count'][day])
-                 day_dict['count'] = count
+            if day in grouped_dict["adult_count"]:
+                day_dict["day"] = day
+                count = int(grouped_dict["adult_count"][day])
+                day_dict["count"] = count
             else:
-                 day_dict['day'] = day
-                 day_dict['count'] = 0
+                day_dict["day"] = day
+                day_dict["count"] = 0
             day_counts.append(day_dict)
         graph_data.append(
-            {'species': pops['species'], 'run': pops['run'], 'origin': pops['origin'], 'day_counts': day_counts})
+            {
+                "species": pops["species"],
+                "run": pops["run"],
+                "origin": pops["origin"],
+                "day_counts": day_counts,
+            }
+        )
     return json.dumps(graph_data)
 
 
@@ -56,9 +73,11 @@ def compute_bargraph_data(hatchery_provider_response: HatcheryProviderResponse):
     Output:
         bargraph_data: JSON string as:
             List of dictionaries
-            example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer', year_counts: [{year: int, count: int}]}]
+            example: [{'species': 'Chinook', 'origin': 'WILD', run: 'Summer', 
+                year_counts: [{year: int, count: int}]}]
     Info:
-        In this study populations are distinguised by what species they are (species), if they are hatchery
+        In this study populations are distinguised by what species they are 
+            (species), if they are hatchery
         or wild (origin), and what time of the year they return (run)
     """
     distinct_populations = hatchery_provider_response.distinct_populations
@@ -89,6 +108,56 @@ def compute_bargraph_data(hatchery_provider_response: HatcheryProviderResponse):
     return json.dumps(graph_data)
 
 
+def compute_KDE(hatchery_provider_response: HatcheryProviderResponse):
+    """
+    Parameters:
+        hatchery_provider_response
+    Output:
+        final_dict: JSON string as:
+            Output: list[dict['year': int, 'count': float]]
+    """
+    distinct_populations = hatchery_provider_response.distinct_populations
+    df = hatchery_provider_response.df
+    graph_data = []
+    for pops in distinct_populations:
+        # Drop duplicate values, format by distinct populations
+        subset_df = format_data(pops, df)
+        # Format data as 1D array
+        total = []
+        for index, row in subset_df.iterrows():
+            arr = np.repeat(np.float32(row.DOY), row.adult_count)
+            total = np.append(arr, total)
+        # Fit model to 2 years of data
+        half_length = int(len(total) / 2)
+        below = total[-half_length:] - 366
+        above = total[:half_length] + 366
+        sample = np.concatenate([below, total, above])
+        model = KernelDensity(bandwidth=8, kernel="epanechnikov")
+        sample = sample.reshape((len(sample), 1))
+        model.fit(sample)
+        # Get probabilities for one year
+        values = asarray([value for value in range(0, 366)])
+        values = values.reshape((len(values), 1))
+        probabilities = model.score_samples(values)
+        probabilities = exp(probabilities)
+        probabilities = probabilities * 2
+        probabilities = probabilities.round(4)
+        values = np.ravel(values)
+        stack = np.vstack((values, probabilities)).T
+        final_df = pd.DataFrame(stack[:, 1].T)
+        # Format data for front end
+        density_data = make_json_table_format(final_df.to_dict()[0])
+        graph_data.append(
+            {
+                "species": pops["species"],
+                "run": pops["run"],
+                "origin": pops["origin"],
+                "density_data": density_data,
+            }
+        )
+    return json.dumps(graph_data)
+
+
 def get_rolling_average(hatchery_provider_response: HatcheryProviderResponse):
     """
     Parameters:
@@ -104,6 +173,7 @@ def get_rolling_average(hatchery_provider_response: HatcheryProviderResponse):
     for pops in distinct_populations:
         # Drop duplicate values, format by distinct populations
         subset_df = format_data(pops, df)
+        subset_df.to_csv("new_test.csv")
         # Normalize counts per day by year calculate average per day
         normalized_df = normalize_data(subset_df)
         # Create dictionary with key-value for every day of year
@@ -217,12 +287,14 @@ def calculate_rolling_avg(population, DOY_dict):
     ):
         shifted_dict = shift_forward(DOY_dict)
         series = pd.Series(shifted_dict)
-        series.rolling(5, center=True)
+        series.to_csv(f'{population["species"]}_{population["run"]}.csv')
+        # series.rolling(5, center=True)
         final_dict = shift_backward(series)
         data = make_json_table_format(final_dict)
     else:
         series = pd.Series(DOY_dict)
-        series.rolling(5, center=True)
+        series.to_csv(f'{population["species"]}_{population["run"]}.csv')
+        # series.rolling(5, center=True)
         series = series.round(decimals=3)
         final_dict = series.to_dict()
         data = make_json_table_format(final_dict)

@@ -4,7 +4,11 @@ import os
 from dotenv import load_dotenv
 
 from config import hatcheries
-from create_graph_data import compute_bargraph_data, get_rolling_average, get_recent_escapement
+from create_graph_data import (
+    compute_bargraph_data,
+    compute_KDE,
+    get_recent_escapement,
+)
 
 load_dotenv()
 
@@ -15,7 +19,7 @@ for hatchery_name, provider in hatcheries.items():
 
     # Outputs as JSON
     bargraph = compute_bargraph_data(hatchery_provider_response)
-    rolling_average = get_rolling_average(hatchery_provider_response)
+    density_estimation = compute_KDE(hatchery_provider_response)
     recent_escapement = get_recent_escapement(hatchery_provider_response)
 
     session = boto3.Session(
@@ -31,16 +35,16 @@ for hatchery_name, provider in hatcheries.items():
 
     object_bargraph.put(Body=bargraph)
 
-    object_rolling_average = s3.Object(
+    object_density_estimation = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{hatchery_name.replace(' ', '_')}_rolling_average",
+        key=f"{hatchery_name.replace(' ', '_')}_areagraph",
     )
 
-    object_rolling_average.put(Body=rolling_average)
+    object_density_estimation.put(Body=density_estimation)
 
     object_recent_escapement = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{hatchery_name.replace(' ', '_')}_recent_escapement"
+        key=f"{hatchery_name.replace(' ', '_')}_recent_escapement",
     )
 
     object_recent_escapement.put(Body=recent_escapement)

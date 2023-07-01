@@ -3,3 +3,5 @@ pandas==1.5.0
 sodapy==2.2.0
 boto3==1.26.133
 python-dotenv==1.0.0
+scikit-learn==1.0.2
+numpy==1.21.5
