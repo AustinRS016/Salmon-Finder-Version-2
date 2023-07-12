@@ -8,7 +8,7 @@ from create_graph_data import (
 )
 
 hatchery_name = "COWLITZ SALMON HATCHERY"
-provider = hatcheries[hatchery_name]
+provider = hatcheries[hatchery_name].provider
 
 hatchery_provider_response = provider.hatchery_provider.value.get_hatchery_data(
     hatchery_name

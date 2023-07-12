@@ -4,7 +4,6 @@ from enum import Enum
 from wdfw_provider import WDFWProviderLogic
 
 
-@dataclass
 class HatcheryProvider(Enum):
     WA_HATCHERY_DATA = WDFWProviderLogic()
 
