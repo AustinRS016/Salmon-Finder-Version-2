@@ -4,13 +4,19 @@ import os
 from dotenv import load_dotenv
 
 from config import hatcheries
-from create_graph_data import compute_bargraph_data, get_rolling_average, get_recent_escapement
+from create_graph_data import (
+    compute_bargraph_data,
+    get_rolling_average,
+    get_recent_escapement,
+)
 
 load_dotenv()
 
-for hatchery_name, provider in hatcheries.items():
-    hatchery_provider_response = provider.hatchery_provider.value.get_hatchery_data(
-        hatchery_name
+for hatchery_name, config in hatcheries.items():
+    hatchery_provider_response = (
+        config.provider.hatchery_provider.value.get_hatchery_data(
+            config.facility.replace("_", " ")
+        )
     )
 
     # Outputs as JSON
@@ -26,21 +32,21 @@ for hatchery_name, provider in hatcheries.items():
 
     object_bargraph = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{hatchery_name.replace(' ', '_')}_bargraph",
+        key=f"{config.facility}_bargraph",
     )
 
     object_bargraph.put(Body=bargraph)
 
     object_rolling_average = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{hatchery_name.replace(' ', '_')}_rolling_average",
+        key=f"{config.facility}_rolling_average",
     )
 
     object_rolling_average.put(Body=rolling_average)
 
     object_recent_escapement = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{hatchery_name.replace(' ', '_')}_recent_escapement"
+        key=f"{config.facility}_recent_escapement",
     )
 
     object_recent_escapement.put(Body=recent_escapement)
