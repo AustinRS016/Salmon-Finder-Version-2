@@ -1,12 +1,18 @@
 from dotenv import load_dotenv
 
 from config import hatcheries
-from create_graph_data import compute_bargraph_data, get_rolling_average, get_recent_escapement
+from create_graph_data import (
+    compute_bargraph_data,
+    get_rolling_average,
+    get_recent_escapement,
+)
 
 hatchery_name = "COWLITZ SALMON HATCHERY"
-provider = hatcheries[hatchery_name]
+provider = hatcheries[hatchery_name].provider
 
-hatchery_provider_response = provider.hatchery_provider.value.get_hatchery_data(hatchery_name)
+hatchery_provider_response = provider.hatchery_provider.value.get_hatchery_data(
+    hatchery_name
+)
 
 # recent_escapement = get_recent_escapement(hatchery_provider_response)
 
