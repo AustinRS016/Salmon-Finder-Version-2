@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from flask import Flask, Response
+from flask_cors import CORS
 from config import hatcheries
 from dataclasses_json import config, dataclass_json
 
@@ -8,6 +9,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
+cors = CORS(app, origins=['http://localhost:3000'])
 
 
 @dataclass_json
