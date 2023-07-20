@@ -1,15 +1,20 @@
-from dataclasses import dataclass, field
-from flask import Flask, Response
-from flask_cors import CORS
+import boto3
+import logging
+import os
+
 from config import hatcheries
 from dataclasses_json import config, dataclass_json
+from dataclasses import dataclass, field
+from dotenv import load_dotenv
+from flask import Flask, Response, json
+from flask_cors import CORS
 
-import logging
+load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
-cors = CORS(app, origins=['http://localhost:3000'])
+cors = CORS(app, origins=["http://localhost:3000"])
 
 
 @dataclass_json
@@ -45,12 +50,57 @@ class HatcheryGeoJson:
 
 @dataclass_json
 @dataclass
-class HatcheryConfigCleaned:
-    facility: str
-    wria: str
-    river_gauge: str
-    lat: float
-    long: float
+class Count:
+    species: str
+    run: str
+    origin: str
+
+
+@dataclass_json
+@dataclass
+class DateCount:
+    date: str
+    count: int
+
+
+@dataclass_json
+@dataclass
+class YearCount:
+    year: int
+    count: int
+
+
+@dataclass_json
+@dataclass
+class DayCount:
+    day: int
+    count: int
+
+
+@dataclass_json
+@dataclass
+class RecentDailyEscapementCount(Count):
+    date_counts: list[DateCount]
+
+
+@dataclass_json
+@dataclass
+class HistoricalYearlyCount(Count):
+    year_counts: list[YearCount]
+
+
+@dataclass_json
+@dataclass
+class HistoricalDailyAverageCount(Count):
+    day_counts: list[DayCount]
+
+
+@dataclass_json
+@dataclass
+class HatcheryData:
+    historical_yearly_counts: list[HistoricalYearlyCount]
+    historical_daily_average_counts: list[HistoricalDailyAverageCount]
+    recent_daily_escapement_counts: list[RecentDailyEscapementCount]
 
 
 @app.route("/mapconfig")
@@ -69,6 +119,81 @@ def get_map_config():
         ],
     )
     return Response(res.to_json(), content_type="application/geo+json")
+
+
+@app.route("/hatchery/<facility>")
+def get_hatchery(facility):
+    session = boto3.Session(
+        aws_access_key_id=os.getenv("BUCKETEER_AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("BUCKETEER_AWS_SECRET_ACCESS_KEY"),
+    )
+    s3 = session.resource("s3")
+
+    object_bargraph = s3.Object(
+        bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
+        key=f"{facility}_bargraph",
+    ).get()
+
+    bargraph_json = json.loads(object_bargraph["Body"].read())
+
+    object_rolling_average = s3.Object(
+        bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
+        key=f"{facility}_rolling_average",
+    ).get()
+
+    rolling_average_json = json.loads(object_rolling_average["Body"].read())
+
+    print(rolling_average_json)
+
+    object_recent_escapement = s3.Object(
+        bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
+        key=f"{facility}_recent_escapement",
+    ).get()
+
+    recent_escapement_json = json.loads(object_recent_escapement["Body"].read())
+
+    print(recent_escapement_json)
+
+    res = HatcheryData(
+        [
+            HistoricalYearlyCount(
+                el["species"],
+                el["run"],
+                el["origin"],
+                [
+                    YearCount(year_count["year"], year_count["count"])
+                    for year_count in el["year_counts"]
+                ],
+            )
+            for el in bargraph_json
+        ],
+        [
+            HistoricalDailyAverageCount(
+                el["species"],
+                el["run"],
+                el["origin"],
+                [
+                    DayCount(day_count["day"], day_count["count"])
+                    for day_count in el["rolling_average"]
+                ],
+            )
+            for el in rolling_average_json
+        ],
+        [
+            RecentDailyEscapementCount(
+                el["species"],
+                el["run"],
+                el["origin"],
+                [
+                    DateCount(date_count["day"], date_count["count"])
+                    for date_count in el["day_counts"]
+                ],
+            )
+            for el in recent_escapement_json
+        ],
+    )
+
+    return Response(res.to_json())
 
 
 if __name__ == "__main__":

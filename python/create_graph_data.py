@@ -22,7 +22,7 @@ def get_recent_escapement(hatchery_provider_response: HatcheryProviderResponse):
     filtered_df = df[df["date"] > two_weeks_prior]
 
     if len(filtered_df) == 0:
-        return []
+        return json.dumps([])
 
     graph_data = []
     for pops in distinct_populations:
