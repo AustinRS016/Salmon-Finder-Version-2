@@ -152,8 +152,6 @@ def get_hatchery(facility):
 
     recent_escapement_json = json.loads(object_recent_escapement["Body"].read())
 
-    print(recent_escapement_json)
-
     res = HatcheryData(
         [
             HistoricalYearlyCount(
