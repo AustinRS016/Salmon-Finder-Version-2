@@ -46,7 +46,7 @@ for hatchery_name, config in hatcheries.items():
 
     object_recent_escapement = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{config.facility}_recent_escapement",
+        key=f"{config.facility}_density_estimation",
     )
 
     object_recent_escapement.put(Body=recent_escapement)
