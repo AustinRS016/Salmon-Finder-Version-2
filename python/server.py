@@ -136,14 +136,12 @@ def get_hatchery(facility):
 
     bargraph_json = json.loads(object_bargraph["Body"].read())
 
-    object_rolling_average = s3.Object(
+    object_denisty_estimation = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{facility}_rolling_average",
+        key=f"{facility}_density_estimation",
     ).get()
 
-    rolling_average_json = json.loads(object_rolling_average["Body"].read())
-
-    print(rolling_average_json)
+    density_estimation = json.loads(object_denisty_estimation["Body"].read())
 
     object_recent_escapement = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
@@ -172,10 +170,10 @@ def get_hatchery(facility):
                 el["origin"],
                 [
                     DayCount(day_count["day"], day_count["count"])
-                    for day_count in el["rolling_average"]
+                    for day_count in el["density_data"]
                 ],
             )
-            for el in rolling_average_json
+            for el in density_estimation
         ],
         [
             RecentDailyEscapementCount(
