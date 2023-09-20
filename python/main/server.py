@@ -141,7 +141,7 @@ def get_hatchery(facility):
         key=f"{facility}_density_estimation",
     ).get()
 
-    density_estimation_json = json.loads(object_denisty_estimation["Body"].read())
+    density_estimation = json.loads(object_denisty_estimation["Body"].read())
 
     object_recent_escapement = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
@@ -173,7 +173,8 @@ def get_hatchery(facility):
                     for day_count in el["density_data"]
                 ],
             )
-            for el in density_estimation_json
+
+            for el in density_estimation
         ],
         [
             RecentDailyEscapementCount(
