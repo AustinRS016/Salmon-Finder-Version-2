@@ -173,7 +173,6 @@ def get_hatchery(facility):
                     for day_count in el["density_data"]
                 ],
             )
-
             for el in density_estimation
         ],
         [
