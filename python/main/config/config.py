@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from wdfw_provider import WDFWProviderLogic
+from .wdfw_provider import WDFWProviderLogic
 
 
 class HatcheryProvider(Enum):
@@ -19,8 +19,65 @@ class HatcheryConfig:
     facility: str
     wria: str
     river_gauge: str
+    lon: float
     lat: float
-    long: float
+    reduced_coordinate_key: int
+
+
+# lon, lat
+reduced_coordinates_dict = {
+    0: (-121.6981, 48.6491),
+    1: (-123.3287, 46.2259),
+    2: (-123.4003, 47.1461),
+    3: (-124.4389, 47.9349),
+    4: (-121.9625, 47.3761),
+    5: (-120.6519, 47.789),
+    6: (-117.2966, 46.0376),
+    7: (-122.6293, 46.5113),
+    8: (-123.1406, 48.028),
+    9: (-120.2892, 47.5336),
+    10: (-123.5493, 48.1152),
+    11: (-123.5948, 46.558),
+    12: (-122.5741, 47.1915),
+    13: (-123.1818, 47.3013),
+    14: (-123.1399, 47.407),
+    15: (-123.9892, 47.2332),
+    16: (-123.1433, 48.1197),
+    17: (-121.9786, 47.2799),
+    18: (-122.0386, 47.5295),
+    19: (-122.142, 48.8973),
+    20: (-122.6165, 45.937),
+    21: (-118.2287, 46.5969),
+    22: (-121.4178, 48.5223),
+    23: (-123.203, 47.3066),
+    24: (-122.7026, 47.3726),
+    25: (-123.7531, 46.3722),
+    26: (-123.8411, 46.503),
+    27: (-122.572, 46.3746),
+    28: (-119.8967, 46.6486),
+    29: (-121.6241, 47.839),
+    30: (-119.2612, 46.5146),
+    31: (-122.3315, 48.5649),
+    32: (-122.2179, 45.6208),
+    33: (-122.7255, 46.79),
+    34: (-122.1688, 47.3093),
+    35: (-122.4053, 45.9887),
+    36: (-121.8397, 47.5536),
+    37: (-117.6628, 46.3201),
+    38: (-122.9043, 47.0144),
+    39: (-122.1775, 47.0828),
+    40: (-122.166, 45.6518),
+    41: (-123.371964, 46.226517),
+    42: (-122.73316, 46.016026),
+    43: (-123.742635, 46.980079),
+    44: (-122.555653, 45.956563),
+    45: (-122.838527, 46.044736),
+    46: (-124.306113, 48.054483),
+    47: (-121.550793, 47.803818),
+    48: (-121.717, 47.8674),
+    49: (-122.255633, 45.618172),
+    50: (-121.720542, 48.27576),
+}
 
 
 hatcheries = {
@@ -31,6 +88,7 @@ hatcheries = {
         "12194000",
         -121.6981,
         48.6491,
+        0,
     ),
     "BEAVER CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -39,6 +97,7 @@ hatcheries = {
         "",
         -123.3287,
         46.2259,
+        1,
     ),
     "BINGHAM CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -47,6 +106,7 @@ hatcheries = {
         "12035000",
         -123.4003,
         47.1461,
+        2,
     ),
     "BOGACHIEL HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -55,6 +115,7 @@ hatcheries = {
         "12042800",
         -124.4389,
         47.9349,
+        3,
     ),
     "CEDAR RIVER HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -63,6 +124,7 @@ hatcheries = {
         "12117500",
         -121.9625,
         47.3761,
+        4,
     ),
     "CHIWAWA HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -71,6 +133,7 @@ hatcheries = {
         "12459000",
         -120.6519,
         47.789,
+        5,
     ),
     "COTTONWOOD CREEK POND": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -79,6 +142,7 @@ hatcheries = {
         "13334300",
         -117.2966,
         46.0376,
+        6,
     ),
     "COWLITZ SALMON HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -87,6 +151,7 @@ hatcheries = {
         "14238000",
         -122.6293,
         46.5113,
+        7,
     ),
     "DUNGENESS HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -95,6 +160,7 @@ hatcheries = {
         "12048000",
         -123.1406,
         48.028,
+        8,
     ),
     "EASTBANK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -103,6 +169,7 @@ hatcheries = {
         "",
         -120.2892,
         47.5336,
+        9,
     ),
     "ELWHA HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -111,6 +178,7 @@ hatcheries = {
         "12045500",
         -123.5493,
         48.1152,
+        10,
     ),
     "FORKS CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -119,6 +187,7 @@ hatcheries = {
         "12013500",
         -123.5948,
         46.558,
+        11,
     ),
     "GARRISON HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -127,6 +196,7 @@ hatcheries = {
         "",
         -122.5741,
         47.1915,
+        12,
     ),
     "GEORGE ADAMS HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -135,6 +205,7 @@ hatcheries = {
         "12061500",
         -123.1818,
         47.3013,
+        13,
     ),
     "HOODSPORT HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -143,6 +214,7 @@ hatcheries = {
         "",
         -123.1399,
         47.407,
+        14,
     ),
     "HUMPTULIPS HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -151,6 +223,7 @@ hatcheries = {
         "12039005",
         -123.9892,
         47.2332,
+        15,
     ),
     "HURD CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -159,6 +232,7 @@ hatcheries = {
         "12048000",
         -123.1433,
         48.1197,
+        16,
     ),
     "ICY CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -167,6 +241,7 @@ hatcheries = {
         "12113000",
         -121.9786,
         47.2799,
+        17,
     ),
     "ISSAQUAH HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -175,6 +250,7 @@ hatcheries = {
         "",
         -122.0386,
         47.5295,
+        18,
     ),
     "KENDALL CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -183,6 +259,7 @@ hatcheries = {
         "12205000",
         -122.142,
         48.8973,
+        19,
     ),
     "LEWIS RIVER HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -191,6 +268,7 @@ hatcheries = {
         "14220500",
         -122.6165,
         45.937,
+        20,
     ),
     "LYONS FERRY HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -199,6 +277,7 @@ hatcheries = {
         "13352600",
         -118.2287,
         46.5969,
+        21,
     ),
     "MARBLEMOUNT HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -207,6 +286,7 @@ hatcheries = {
         "12182500",
         -121.4178,
         48.5223,
+        22,
     ),
     "MCKERNAN HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -215,6 +295,7 @@ hatcheries = {
         "12061500",
         -123.203,
         47.3066,
+        23,
     ),
     "MINTER CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -223,6 +304,7 @@ hatcheries = {
         "",
         -122.7026,
         47.3726,
+        24,
     ),
     "NASELLE HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -231,6 +313,7 @@ hatcheries = {
         "12010000",
         -123.7531,
         46.3722,
+        25,
     ),
     "NEMAH HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -239,6 +322,7 @@ hatcheries = {
         "",
         -123.8411,
         46.503,
+        26,
     ),
     "NORTH TOUTLE HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -247,6 +331,7 @@ hatcheries = {
         "14240525",
         -122.572,
         46.3746,
+        27,
     ),
     "PRIEST RAPIDS HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -255,6 +340,7 @@ hatcheries = {
         "12472800",
         -119.8967,
         46.6486,
+        28,
     ),
     "REITER PONDS": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -263,6 +349,7 @@ hatcheries = {
         "12134500",
         -121.6241,
         47.839,
+        29,
     ),
     "RINGOLD SPRINGS HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -271,6 +358,7 @@ hatcheries = {
         "12472800",
         -119.2612,
         46.5146,
+        30,
     ),
     "SAMISH HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -279,6 +367,7 @@ hatcheries = {
         "12201500",
         -122.3315,
         48.5649,
+        31,
     ),
     "SKAMANIA HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -287,6 +376,7 @@ hatcheries = {
         "",
         -122.2179,
         45.6208,
+        32,
     ),
     "SKOOKUMCHUCK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -295,6 +385,7 @@ hatcheries = {
         "12026400",
         -122.7255,
         46.79,
+        33,
     ),
     "SOOS CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -303,6 +394,7 @@ hatcheries = {
         "12113000",
         -122.1688,
         47.3093,
+        34,
     ),
     "SPEELYAI HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -311,6 +403,7 @@ hatcheries = {
         "",
         -122.4053,
         45.9887,
+        35,
     ),
     "TOKUL CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -319,6 +412,7 @@ hatcheries = {
         "12144500",
         -121.8397,
         47.5536,
+        36,
     ),
     "TUCANNON HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -327,6 +421,7 @@ hatcheries = {
         "13344500",
         -117.6628,
         46.3201,
+        37,
     ),
     "TUMWATER FALLS HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -335,6 +430,7 @@ hatcheries = {
         "",
         -122.9043,
         47.0144,
+        38,
     ),
     "VOIGHTS CREEK HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -343,6 +439,7 @@ hatcheries = {
         "12096500",
         -122.1775,
         47.0828,
+        39,
     ),
     "WASHOUGAL HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -351,6 +448,7 @@ hatcheries = {
         "",
         -122.166,
         45.6518,
+        40,
     ),
     "FOSTER RD TRAP": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -359,6 +457,7 @@ hatcheries = {
         "",
         -123.371964,
         46.226517,
+        41,
     ),
     "KALAMA FALLS HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -367,6 +466,7 @@ hatcheries = {
         "",
         -122.73316,
         46.016026,
+        42,
     ),
     "LK ABERDEEN HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -375,6 +475,7 @@ hatcheries = {
         "",
         -123.742635,
         46.980079,
+        43,
     ),
     "MERWIN DAM FCF": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -383,6 +484,7 @@ hatcheries = {
         "14220500",
         -122.555653,
         45.956563,
+        44,
     ),
     "MODROW TRAP": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -391,6 +493,7 @@ hatcheries = {
         "",
         -122.838527,
         46.044736,
+        45,
     ),
     "SOLDUC HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -399,6 +502,7 @@ hatcheries = {
         "",
         -124.306113,
         48.054483,
+        46,
     ),
     "SUNSET FALLS FCF": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -407,6 +511,7 @@ hatcheries = {
         "12134500",
         -121.550793,
         47.803818,
+        47,
     ),
     "WALLACE R HATCHERY": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -415,6 +520,7 @@ hatcheries = {
         "12134500",
         -121.717,
         47.8674,
+        48,
     ),
     "WASHOUGAL RIVER FISH WEIR": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -423,6 +529,7 @@ hatcheries = {
         "",
         -122.255633,
         45.618172,
+        49,
     ),
     "WHITEHORSE POND": HatcheryConfig(
         Provider(HatcheryProvider.WA_HATCHERY_DATA),
@@ -431,5 +538,6 @@ hatcheries = {
         "12167000",
         -121.720542,
         48.27576,
+        50,
     ),
 }

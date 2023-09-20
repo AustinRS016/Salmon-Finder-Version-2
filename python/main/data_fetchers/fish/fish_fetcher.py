@@ -3,8 +3,8 @@ import os
 
 from dotenv import load_dotenv
 
-from config import hatcheries
-from create_graph_data import (
+from ...config.config import hatcheries
+from .create_graph_data import (
     compute_bargraph_data,
     get_rolling_average,
     get_recent_escapement,
@@ -39,7 +39,7 @@ for hatchery_name, config in hatcheries.items():
 
     object_rolling_average = s3.Object(
         bucket_name=os.getenv("BUCKETEER_BUCKET_NAME"),
-        key=f"{config.facility}_rolling_average",
+        key=f"{config.facility}_density_estimation",
     )
 
     object_rolling_average.put(Body=rolling_average)

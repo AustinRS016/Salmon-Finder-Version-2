@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-from config import hatcheries
+from ....main.config.config import hatcheries
 from create_graph_data import (
     compute_bargraph_data,
     get_rolling_average,

@@ -2,7 +2,7 @@ import pandas as pd
 import json
 from datetime import date, timedelta
 
-from hatchery_provider_meta import HatcheryProviderResponse
+from ...config.hatchery_provider_meta import HatcheryProviderResponse
 
 
 def get_recent_escapement(hatchery_provider_response: HatcheryProviderResponse):
