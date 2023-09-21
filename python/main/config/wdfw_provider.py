@@ -3,7 +3,7 @@ import os
 from sodapy import Socrata
 import pandas as pd
 
-from hatchery_provider_meta import HatcheryProviderLogic, HatcheryProviderResponse
+from .hatchery_provider_meta import HatcheryProviderLogic, HatcheryProviderResponse
 
 
 class WDFWProviderLogic(HatcheryProviderLogic):

@@ -2,7 +2,7 @@ import boto3
 import logging
 import os
 
-from config import hatcheries
+from config.config import hatcheries
 from dataclasses_json import config, dataclass_json
 from dataclasses import dataclass, field
 from dotenv import load_dotenv
@@ -113,7 +113,7 @@ def get_map_config():
                 properties=HatcheryFeatureProperties(
                     key, value.facility, value.wria, value.river_gauge
                 ),
-                geometry=HatcheryFeatureGeometry("Point", [value.lat, value.long]),
+                geometry=HatcheryFeatureGeometry("Point", [value.lat, value.lon]),
             )
             for key, value in hatcheries.items()
         ],
