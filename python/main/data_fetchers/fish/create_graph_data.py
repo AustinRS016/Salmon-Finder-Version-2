@@ -7,7 +7,7 @@ from numpy import exp
 from sklearn.neighbors import KernelDensity
 
 
-from hatchery_provider_meta import HatcheryProviderResponse
+from ...config.hatchery_provider_meta import HatcheryProviderResponse
 
 
 def get_recent_escapement(hatchery_provider_response: HatcheryProviderResponse):

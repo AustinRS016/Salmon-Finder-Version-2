@@ -7,6 +7,9 @@
 3. pip3 install -r requirements.txt - Run this after activating the venv, and when requirements.txt changes. It installs the dependencies specified.
 4. When you want to add new Python packages, add it to requirements.txt and run step 3 again!
 
+To run a fetcher, go to python dir and run python -m main.data_fetchers.weather.weather_fetcher 
+To run the server, go to main and run python server.py
+
 2nd iteration of Master's capstone project, post graduation. Implementing React.js and Material UI for ease of development and cleaner user interface.
 
 Version 1: https://austinrs016.github.io/mapHatcheries/

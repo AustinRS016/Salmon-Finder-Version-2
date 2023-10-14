@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-from config import hatcheries
+from ...config.config import hatcheries
 from create_graph_data import (
     compute_bargraph_data,
     compute_KDE,
