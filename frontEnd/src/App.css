@@ -1,0 +1,32 @@
+html {
+	/* color-scheme: light dark; */
+}
+
+h3 {
+	text-align: center;
+}
+
+body {
+	font-family: system-ui;
+	line-height: 1.5;
+	font-size: 1.125rem;
+	margin: 0;
+}
+h1 {
+	font-size: clamp(2rem, 1rem + 10vw, 5rem);
+}
+img,
+svg,
+video {
+	max-width: 100%;
+	display: block;
+}
+
+.App {
+	/* use for non map content */
+	/* width: min(65ch, 100% - 4rem); */
+	position: relative;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}

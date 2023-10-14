@@ -1,0 +1,19 @@
+.graph-card {
+	width: 420px;
+	height: 290px;
+	flex-shrink: 0;
+	margin: 7px;
+}
+
+.graph-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.skeleton-row {
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+}
