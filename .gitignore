@@ -6,6 +6,15 @@ python/__pycache__/
 .data
 .rolling_average
 .bargraph
-frontEnd/nodemodules/
+
+# dependencies
+frontEnd/node_modules/
 frontEnd/.pnp
 frontEnd/.pnp.js
+
+#production
+frontEnd/build
+
+frontEnd/npm-debug.log*
+frontEnd/yarn-debug.log*
+frontEnd/yarn-error.log*
